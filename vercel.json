@@ -3,12 +3,12 @@
   "outputDirectory": ".",
   "rewrites": [
     {
-      "source": "/",
+      "source": "/menu",
       "destination": "/menu.html"
     },
     {
-      "source": "/index",
-      "destination": "/index.html"
+      "source": "/ar-marker",
+      "destination": "/index-ar-marker.html"
     },
     {
       "source": "/mobile",
@@ -21,6 +21,10 @@
     {
       "source": "/ar",
       "destination": "/index-ar-simple.html"
+    },
+    {
+      "source": "/no-ar",
+      "destination": "/index-no-ar.html"
     }
   ],
   "headers": [

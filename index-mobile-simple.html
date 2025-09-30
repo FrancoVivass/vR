@@ -171,14 +171,15 @@
         renderer="antialias: false; precision: lowp"
         background="color: #000011">
         
-        <!-- Cámara -->
+        <!-- Cámara optimizada para móvil -->
         <a-camera 
             id="camera"
             position="0 1.6 5" 
-            look-controls="enabled: true; touchEnabled: true"
+            look-controls="enabled: true; touchEnabled: true; pointerLockEnabled: false; magicWindowTrackingEnabled: true"
             wasd-controls="enabled: false"
             cursor="rayOrigin: mouse"
-            raycaster="objects: .clickable">
+            raycaster="objects: .clickable"
+            touch-action="none">
         </a-camera>
 
         <!-- Iluminación mínima -->
@@ -500,7 +501,10 @@
                 if (typeof AFRAME !== 'undefined') {
                     clearInterval(checkAFrame);
                     
-                    updateLoadingStatus('Configurando escena...');
+                    updateLoadingStatus('Configurando controles móviles...');
+                    
+                    // Configurar controles táctiles
+                    setupMobileControls();
                     
                     setTimeout(() => {
                         hideLoadingIndicator();
@@ -509,6 +513,66 @@
                 }
             }, 100);
         });
+
+        // Configurar controles móviles
+        function setupMobileControls() {
+            const camera = document.getElementById('camera');
+            if (!camera) return;
+
+            // Configurar look-controls para móvil
+            camera.setAttribute('look-controls', {
+                enabled: true,
+                touchEnabled: true,
+                pointerLockEnabled: false,
+                magicWindowTrackingEnabled: true,
+                reverseMouseDrag: false
+            });
+
+            // Agregar controles de gestos
+            document.addEventListener('touchstart', handleTouchStart);
+            document.addEventListener('touchmove', handleTouchMove);
+            document.addEventListener('touchend', handleTouchEnd);
+        }
+
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let isDragging = false;
+
+        function handleTouchStart(event) {
+            if (event.touches.length === 1) {
+                touchStartX = event.touches[0].clientX;
+                touchStartY = event.touches[0].clientY;
+                isDragging = true;
+                event.preventDefault();
+            }
+        }
+
+        function handleTouchMove(event) {
+            if (isDragging && event.touches.length === 1) {
+                const deltaX = event.touches[0].clientX - touchStartX;
+                const deltaY = event.touches[0].clientY - touchStartY;
+                
+                // Rotar la cámara basado en el movimiento del dedo
+                const camera = document.getElementById('camera');
+                if (camera) {
+                    const currentRotation = camera.getAttribute('rotation') || {x: 0, y: 0, z: 0};
+                    const newRotation = {
+                        x: currentRotation.x - deltaY * 0.5,
+                        y: currentRotation.y - deltaX * 0.5,
+                        z: currentRotation.z
+                    };
+                    camera.setAttribute('rotation', newRotation);
+                }
+                
+                touchStartX = event.touches[0].clientX;
+                touchStartY = event.touches[0].clientY;
+                event.preventDefault();
+            }
+        }
+
+        function handleTouchEnd(event) {
+            isDragging = false;
+        }
 
         // Cerrar información tocando fuera en móvil
         document.addEventListener('touchstart', function(event) {

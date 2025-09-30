@@ -5,6 +5,10 @@
       "destination": "/menu.html"
     },
     {
+      "source": "/working",
+      "destination": "/index-working.html"
+    },
+    {
       "source": "/mobile",
       "destination": "/index-mobile-simple.html"
     },

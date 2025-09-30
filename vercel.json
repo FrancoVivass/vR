@@ -1,31 +1,25 @@
 {
   "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "menu.html",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/",
-      "dest": "/menu.html"
+      "source": "/",
+      "destination": "/menu.html"
     },
     {
-      "src": "/index",
-      "dest": "/index.html"
+      "source": "/index",
+      "destination": "/index.html"
     },
     {
-      "src": "/mobile",
-      "dest": "/index-mobile-simple.html"
+      "source": "/mobile",
+      "destination": "/index-mobile-simple.html"
     },
     {
-      "src": "/desktop",
-      "dest": "/index-simple.html"
+      "source": "/desktop",
+      "destination": "/index-simple.html"
     },
     {
-      "src": "/ar",
-      "dest": "/index-ar-simple.html"
+      "source": "/ar",
+      "destination": "/index-ar-simple.html"
     }
   ],
   "headers": [

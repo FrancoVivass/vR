@@ -1,37 +1,12 @@
 {
   "name": "sistema-solar-ar",
   "version": "1.0.0",
-  "description": "Sistema Solar AR - Challenge 4 - Realidad Aumentada con A-Frame",
-  "main": "menu.html",
+  "description": "Sistema Solar AR - Challenge 4",
+  "main": "index.html",
   "scripts": {
-    "start": "npx serve .",
-    "dev": "npx serve .",
-    "build": "echo 'No build step required'",
-    "deploy": "vercel --prod"
+    "build": "echo 'Static site - no build required'"
   },
-  "keywords": [
-    "ar",
-    "vr",
-    "3d",
-    "solar-system",
-    "a-frame",
-    "three.js",
-    "webxr",
-    "realidad-aumentada",
-    "sistema-solar",
-    "educativo"
-  ],
-  "author": "Challenge 4 - Realidad Aumentada",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/TU-USUARIO/sistema-solar-ar.git"
-  },
-  "homepage": "https://sistema-solar-ar.vercel.app",
-  "engines": {
-    "node": ">=14.0.0"
-  },
-  "devDependencies": {
-    "serve": "^14.0.0"
-  }
+  "keywords": ["ar", "vr", "3d", "solar-system", "a-frame"],
+  "author": "Challenge 4",
+  "license": "MIT"
 }

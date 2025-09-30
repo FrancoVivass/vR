@@ -1,14 +1,8 @@
 {
-  "version": 2,
-  "outputDirectory": ".",
   "rewrites": [
     {
       "source": "/menu",
       "destination": "/menu.html"
-    },
-    {
-      "source": "/ar-marker",
-      "destination": "/index-ar-marker.html"
     },
     {
       "source": "/mobile",
@@ -23,27 +17,12 @@
       "destination": "/index-ar-simple.html"
     },
     {
+      "source": "/ar-marker",
+      "destination": "/index-ar-marker.html"
+    },
+    {
       "source": "/no-ar",
       "destination": "/index-no-ar.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        }
-      ]
     }
   ]
 }

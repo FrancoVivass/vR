@@ -1,0 +1,7 @@
+# Redirects for Sistema Solar AR
+/menu /menu.html 200
+/mobile /index-mobile-simple.html 200
+/desktop /index-simple.html 200
+/ar /index-ar-simple.html 200
+/ar-marker /index-ar-marker.html 200
+/no-ar /index-no-ar.html 200

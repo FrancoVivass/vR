@@ -1,0 +1,388 @@
+/* Estilos para el Sistema Solar AR */
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+    overflow: hidden;
+    user-select: none;
+}
+
+/* UI Principal */
+#ui {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    color: white;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 15px;
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    max-width: 300px;
+    transition: all 0.3s ease;
+}
+
+#ui:hover {
+    border-color: rgba(255, 215, 0, 0.6);
+    transform: translateY(-2px);
+}
+
+#ui h2 {
+    margin: 0 0 15px 0;
+    color: #ffd700;
+    font-size: 20px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#ui p {
+    margin: 8px 0;
+    font-size: 14px;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+#ui strong {
+    color: #ffd700;
+}
+
+/* Información del Planeta */
+.planet-info {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(145deg, rgba(0, 0, 0, 0.95), rgba(20, 20, 40, 0.95));
+    color: white;
+    padding: 25px;
+    border-radius: 20px;
+    border: 3px solid #ffd700;
+    max-width: 350px;
+    z-index: 1001;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+    animation: planetInfoAppear 0.3s ease-out;
+}
+
+@keyframes planetInfoAppear {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.planet-info h3 {
+    color: #ffd700;
+    margin-top: 0;
+    font-size: 24px;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+    margin-bottom: 15px;
+}
+
+.planet-info p {
+    margin: 10px 0;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.planet-info strong {
+    color: #ffd700;
+    font-weight: bold;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-btn:hover {
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+    transform: scale(1.1);
+}
+
+/* Controles */
+.controls {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.control-btn {
+    background: linear-gradient(145deg, rgba(255, 215, 0, 0.9), rgba(255, 193, 7, 0.9));
+    color: #000;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    min-width: 120px;
+    text-align: center;
+}
+
+.control-btn:hover {
+    background: linear-gradient(145deg, #ffd700, #ffc107);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5);
+}
+
+.control-btn:active {
+    transform: translateY(-1px) scale(1.02);
+}
+
+/* Marcador AR */
+.ar-marker {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+    color: white;
+    text-align: center;
+    background: linear-gradient(145deg, rgba(0, 0, 0, 0.9), rgba(20, 20, 40, 0.9));
+    padding: 30px;
+    border-radius: 20px;
+    border: 3px solid #ffd700;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
+    }
+}
+
+.ar-marker h3 {
+    color: #ffd700;
+    margin-top: 0;
+    font-size: 22px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.ar-marker p {
+    margin: 10px 0;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #ui {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        max-width: none;
+        padding: 15px;
+    }
+    
+    .planet-info {
+        left: 10px;
+        right: 10px;
+        max-width: none;
+        transform: translateY(-50%);
+    }
+    
+    .controls {
+        bottom: 20px;
+        left: 10px;
+        right: 10px;
+        transform: none;
+        justify-content: center;
+    }
+    
+    .control-btn {
+        flex: 1;
+        min-width: 100px;
+        padding: 10px 15px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    #ui h2 {
+        font-size: 18px;
+    }
+    
+    #ui p {
+        font-size: 12px;
+    }
+    
+    .planet-info h3 {
+        font-size: 20px;
+    }
+    
+    .planet-info p {
+        font-size: 13px;
+    }
+    
+    .control-btn {
+        padding: 8px 12px;
+        font-size: 11px;
+    }
+}
+
+/* Efectos de partículas para el fondo */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 100, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(0, 100, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Animaciones de carga */
+.loading {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffd700;
+    font-size: 24px;
+    z-index: 2000;
+    animation: loadingPulse 1.5s infinite;
+}
+
+@keyframes loadingPulse {
+    0%, 100% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+/* Mejoras para A-Frame */
+a-scene {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Estilos para elementos clickeables */
+.clickable {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.clickable:hover {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+}
+
+/* Efectos de brillo para planetas */
+.planet-glow {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+/* Animaciones personalizadas */
+@keyframes orbit {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes planetRotation {
+    from {
+        transform: rotateY(0deg);
+    }
+    to {
+        transform: rotateY(360deg);
+    }
+}
+
+/* Estilos para el cursor personalizado */
+a-cursor {
+    cursor: pointer;
+}
+
+/* Mejoras de accesibilidad */
+.control-btn:focus,
+.close-btn:focus {
+    outline: 2px solid #ffd700;
+    outline-offset: 2px;
+}
+
+/* Efectos de transición suaves */
+* {
+    transition: all 0.3s ease;
+}
+
+/* Estilos para el modo oscuro mejorado */
+body.dark-mode {
+    background: linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #1a1a1a 100%);
+}
+
+/* Indicadores de estado */
+.status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+    animation: statusBlink 2s infinite;
+}
+
+.status-indicator.active {
+    background-color: #4caf50;
+}
+
+.status-indicator.inactive {
+    background-color: #f44336;
+}
+
+@keyframes statusBlink {
+    0%, 50% {
+        opacity: 1;
+    }
+    51%, 100% {
+        opacity: 0.3;
+    }
+}

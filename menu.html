@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Solar AR - Menú Principal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header {
+            margin-bottom: 40px;
+        }
+        
+        .title {
+            font-size: 3rem;
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            animation: titleGlow 2s infinite alternate;
+        }
+        
+        @keyframes titleGlow {
+            from { text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+            to { text-shadow: 0 0 40px rgba(255, 215, 0, 0.8); }
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .menu-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(15px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            display: block;
+        }
+        
+        .menu-card:hover {
+            border-color: rgba(255, 215, 0, 0.6);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .card-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+        
+        .card-features {
+            list-style: none;
+            text-align: left;
+        }
+        
+        .card-features li {
+            padding: 5px 0;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .card-features li:before {
+            content: "✓ ";
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .recommended {
+            border-color: #ffd700 !important;
+            background: linear-gradient(145deg, rgba(255, 215, 0, 0.1), rgba(255, 193, 7, 0.05));
+        }
+        
+        .recommended .card-title {
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        
+        .recommended-badge {
+            background: #ffd700;
+            color: #000;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        
+        .tech-info {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            margin: 40px 0;
+        }
+        
+        .tech-info h3 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .tech-item {
+            background: rgba(255, 215, 0, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .tech-item h4 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            padding: 20px;
+            text-align: center;
+            opacity: 0.7;
+        }
+        
+        .footer p {
+            margin: 5px 0;
+        }
+        
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2000;
+            color: #ffd700;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #ffd700;
+            display: none;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255, 215, 0, 0.3);
+            border-top: 4px solid #ffd700;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .menu-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .menu-card {
+                padding: 20px;
+            }
+            
+            .card-icon {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🪐 Sistema Solar AR</h1>
+            <p class="subtitle">Challenge 4 - Realidad Aumentada</p>
+            <p class="description">
+                Explora el sistema solar en 3D y Realidad Aumentada. 
+                Elige la versión que mejor se adapte a tu dispositivo y necesidades.
+            </p>
+        </div>
+
+        <div class="menu-grid">
+            <!-- Versión Móvil Simple (Recomendada) -->
+            <a href="index-mobile-simple.html" class="menu-card recommended" onclick="showLoading()">
+                <div class="recommended-badge">RECOMENDADO</div>
+                <div class="card-icon">📱</div>
+                <h3 class="card-title">Móvil Simple</h3>
+                <p class="card-description">
+                    Versión optimizada para dispositivos móviles. Funciona en cualquier teléfono o tablet.
+                </p>
+                <ul class="card-features">
+                    <li>Optimizado para móviles</li>
+                    <li>Rendimiento rápido</li>
+                    <li>Interfaz táctil</li>
+                    <li>Sin problemas de cámara</li>
+                    <li>8 planetas completos</li>
+                </ul>
+            </a>
+
+            <!-- Versión Móvil Avanzada -->
+            <a href="index-mobile.html" class="menu-card" onclick="showLoading()">
+                <div class="card-icon">📲</div>
+                <h3 class="card-title">Móvil Avanzado</h3>
+                <p class="card-description">
+                    Versión completa para móviles con todas las características y efectos visuales.
+                </p>
+                <ul class="card-features">
+                    <li>Efectos visuales avanzados</li>
+                    <li>Texturas de estrellas</li>
+                    <li>Animaciones suaves</li>
+                    <li>Controles táctiles</li>
+                    <li>Información detallada</li>
+                </ul>
+            </a>
+
+            <!-- Versión Desktop Simple -->
+            <a href="index-simple.html" class="menu-card" onclick="showLoading()">
+                <div class="card-icon">💻</div>
+                <h3 class="card-title">Desktop Simple</h3>
+                <p class="card-description">
+                    Versión para computadoras de escritorio. Funciona en cualquier navegador moderno.
+                </p>
+                <ul class="card-features">
+                    <li>Controles de mouse</li>
+                    <li>Teclado WASD</li>
+                    <li>Alta resolución</li>
+                    <li>Rendimiento optimizado</li>
+                    <li>Sin dependencias AR</li>
+                </ul>
+            </a>
+
+            <!-- Versión AR con Marcador -->
+            <a href="index.html" class="menu-card" onclick="showLoading()">
+                <div class="card-icon">🥽</div>
+                <h3 class="card-title">AR con Marcador</h3>
+                <p class="card-description">
+                    Realidad Aumentada completa con marcador HIRO. Requiere cámara y marcador impreso.
+                </p>
+                <ul class="card-features">
+                    <li>Realidad Aumentada real</li>
+                    <li>Marcador HIRO</li>
+                    <li>Experiencia inmersiva</li>
+                    <li>Interacción 3D</li>
+                    <li>Efectos AR</li>
+                </ul>
+            </a>
+
+            <!-- Versión AR Simple -->
+            <a href="index-ar-simple.html" class="menu-card" onclick="showLoading()">
+                <div class="card-icon">🌍</div>
+                <h3 class="card-title">AR Sin Marcador</h3>
+                <p class="card-description">
+                    Realidad Aumentada sin marcador. Funciona apuntando la cámara a cualquier superficie.
+                </p>
+                <ul class="card-features">
+                    <li>Sin marcador necesario</li>
+                    <li>AR inmediato</li>
+                    <li>Fácil de usar</li>
+                    <li>Compatible móvil</li>
+                    <li>Experiencia fluida</li>
+                </ul>
+            </a>
+
+            <!-- Versión Sin AR -->
+            <a href="index-no-ar.html" class="menu-card" onclick="showLoading()">
+                <div class="card-icon">🖥️</div>
+                <h3 class="card-title">Solo 3D</h3>
+                <p class="card-description">
+                    Versión 3D pura sin cámara ni AR. Perfecta para presentaciones y demos.
+                </p>
+                <ul class="card-features">
+                    <li>Sin cámara</li>
+                    <li>3D puro</li>
+                    <li>Estable y rápido</li>
+                    <li>Ideal para demos</li>
+                    <li>Compatible universal</li>
+                </ul>
+            </a>
+        </div>
+
+        <div class="tech-info">
+            <h3>🛠️ Tecnologías Utilizadas</h3>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <h4>A-Frame 1.4.0</h4>
+                    <p>Framework WebXR para VR/AR</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Three.js</h4>
+                    <p>Motor 3D de bajo nivel</p>
+                </div>
+                <div class="tech-item">
+                    <h4>AR.js</h4>
+                    <p>Realidad Aumentada web</p>
+                </div>
+                <div class="tech-item">
+                    <h4>WebGL</h4>
+                    <p>Renderizado 3D</p>
+                </div>
+                <div class="tech-item">
+                    <h4>WebXR</h4>
+                    <p>Estándar de realidad extendida</p>
+                </div>
+                <div class="tech-item">
+                    <h4>HTML5/CSS3/JS</h4>
+                    <p>Estructura moderna</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Challenge 4 - Realidad Aumentada</strong></p>
+            <p>Desarrollado con A-Frame, Three.js y AR.js</p>
+            <p>Compatible con navegadores modernos y dispositivos móviles</p>
+        </div>
+    </div>
+
+    <div class="loading" id="loadingIndicator">
+        <div class="spinner"></div>
+        <h3>Cargando Sistema Solar...</h3>
+        <p>Preparando experiencia 3D</p>
+    </div>
+
+    <script>
+        function showLoading() {
+            document.getElementById('loadingIndicator').style.display = 'block';
+        }
+
+        // Efectos visuales adicionales
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animación de entrada para las tarjetas
+            const cards = document.querySelectorAll('.menu-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Efecto de partículas de fondo
+            createBackgroundParticles();
+        });
+
+        function createBackgroundParticles() {
+            const container = document.querySelector('.container');
+            
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: absolute;
+                    width: 2px;
+                    height: 2px;
+                    background: rgba(255, 215, 0, 0.3);
+                    border-radius: 50%;
+                    pointer-events: none;
+                    animation: float ${Math.random() * 10 + 10}s infinite linear;
+                `;
+                
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                
+                container.appendChild(particle);
+            }
+            
+            // Agregar CSS para animación
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes float {
+                    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+                    10% { opacity: 1; }
+                    90% { opacity: 1; }
+                    100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Detectar dispositivo y recomendar versión
+        function detectDevice() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isTablet = /iPad|Android/i.test(navigator.userAgent) && window.innerWidth > 768;
+            
+            if (isMobile && !isTablet) {
+                console.log('Dispositivo móvil detectado - Recomendado: Móvil Simple');
+            } else if (isTablet) {
+                console.log('Tablet detectado - Recomendado: Móvil Avanzado');
+            } else {
+                console.log('Desktop detectado - Recomendado: Desktop Simple');
+            }
+        }
+
+        // Ejecutar detección
+        detectDevice();
+    </script>
+</body>
+</html>

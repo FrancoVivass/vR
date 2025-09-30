@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Solar 3D - Challenge 4</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            overflow: hidden;
+        }
+        
+        #ui {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            color: white;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            max-width: 300px;
+        }
+        
+        #ui h2 {
+            margin: 0 0 15px 0;
+            color: #ffd700;
+            font-size: 20px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        
+        #ui p {
+            margin: 8px 0;
+            font-size: 14px;
+            line-height: 1.5;
+            opacity: 0.9;
+        }
+        
+        .planet-info {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(145deg, rgba(0, 0, 0, 0.95), rgba(20, 20, 40, 0.95));
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            border: 3px solid #ffd700;
+            max-width: 350px;
+            z-index: 1001;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+        }
+        
+        .planet-info h3 {
+            color: #ffd700;
+            margin-top: 0;
+            font-size: 24px;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            margin-bottom: 15px;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-btn:hover {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            transform: scale(1.1);
+        }
+        
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .control-btn {
+            background: linear-gradient(145deg, rgba(255, 215, 0, 0.9), rgba(255, 193, 7, 0.9));
+            color: #000;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .control-btn:hover {
+            background: linear-gradient(145deg, #ffd700, #ffc107);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5);
+        }
+        
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2000;
+            color: #ffd700;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #ffd700;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255, 215, 0, 0.3);
+            border-top: 4px solid #ffd700;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <h2>🪐 Sistema Solar 3D</h2>
+        <p><strong>Instrucciones:</strong></p>
+        <p>• Haz clic en cualquier planeta</p>
+        <p>• Usa el mouse para mover la cámara</p>
+        <p>• Los planetas orbitan automáticamente</p>
+        <p>• Versión simplificada sin AR</p>
+    </div>
+
+    <div class="planet-info" id="planetInfo">
+        <button class="close-btn" onclick="closePlanetInfo()">&times;</button>
+        <h3 id="planetName"></h3>
+        <p id="planetDescription"></p>
+        <p><strong>Diámetro:</strong> <span id="planetDiameter"></span></p>
+        <p><strong>Distancia al Sol:</strong> <span id="planetDistance"></span></p>
+        <p><strong>Período orbital:</strong> <span id="planetPeriod"></span></p>
+    </div>
+
+    <div class="controls">
+        <button class="control-btn" onclick="resetView()">🔄 Reset Vista</button>
+        <button class="control-btn" onclick="toggleAnimation()">⏯️ Pausar/Reanudar</button>
+        <button class="control-btn" onclick="focusOnSun()">☀️ Enfocar Sol</button>
+        <button class="control-btn" onclick="focusOnEarth()">🌍 Enfocar Tierra</button>
+    </div>
+
+    <div class="loading" id="loadingIndicator">
+        <div class="spinner"></div>
+        <h3>Cargando Sistema Solar...</h3>
+        <p id="loadingStatus">Inicializando...</p>
+    </div>
+
+    <!-- A-Frame Scene -->
+    <a-scene 
+        id="scene"
+        vr-mode-ui="enabled: false"
+        embedded
+        renderer="logarithmicDepthBuffer: true; colorManagement: true; physicallyCorrectLights: true"
+        background="color: #000011"
+        fog="type: exponential; color: #000011; density: 0.0008">
+        
+        <!-- Cámara principal -->
+        <a-camera 
+            id="camera"
+            position="0 1.6 5" 
+            look-controls="enabled: true"
+            wasd-controls="enabled: true"
+            cursor="rayOrigin: mouse"
+            raycaster="objects: .clickable">
+        </a-camera>
+
+        <!-- Iluminación -->
+        <a-light type="ambient" color="#404040" intensity="0.3"></a-light>
+        <a-light type="directional" position="0 10 0" color="#ffffff" intensity="0.8"></a-light>
+        <a-light type="point" position="0 0 0" color="#ffd700" intensity="1.5" distance="50"></a-light>
+
+        <!-- Estrellas de fondo -->
+        <a-sky 
+            id="sky"
+            radius="100" 
+            src="#starsTexture"
+            animation="property: rotation; to: 0 360 0; loop: true; dur: 200000">
+        </a-sky>
+
+        <!-- Sistema Solar -->
+        <a-entity id="solarSystem" position="0 0 0">
+            
+            <!-- Sol -->
+            <a-sphere 
+                id="sun"
+                class="clickable"
+                radius="0.8" 
+                position="0 0 0"
+                material="color: #ffd700; emissive: #ff6600; emissiveIntensity: 0.3"
+                animation="property: rotation; to: 0 360 0; loop: true; dur: 20000"
+                onclick="showPlanetInfo('sun')">
+            </a-sphere>
+
+            <!-- Mercurio -->
+            <a-entity id="mercuryOrbit" position="0 0 0">
+                <a-sphere 
+                    id="mercury"
+                    class="clickable"
+                    radius="0.15" 
+                    position="2 0 0"
+                    material="color: #8c7853; roughness: 0.8"
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 5000"
+                    onclick="showPlanetInfo('mercury')">
+                </a-sphere>
+                <a-animation 
+                    attribute="rotation" 
+                    to="0 360 0" 
+                    dur="20000" 
+                    repeat="indefinite">
+                </a-animation>
+            </a-entity>
+
+            <!-- Venus -->
+            <a-entity id="venusOrbit" position="0 0 0">
+                <a-sphere 
+                    id="venus"
+                    class="clickable"
+                    radius="0.2" 
+                    position="3 0 0"
+                    material="color: #ffc649; roughness: 0.9"
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 8000"
+                    onclick="showPlanetInfo('venus')">
+                </a-sphere>
+                <a-animation 
+                    attribute="rotation" 
+                    to="0 360 0" 
+                    dur="30000" 
+                    repeat="indefinite">
+                </a-animation>
+            </a-entity>
+
+            <!-- Tierra -->
+            <a-entity id="earthOrbit" position="0 0 0">
+                <a-sphere 
+                    id="earth"
+                    class="clickable"
+                    radius="0.25" 
+                    position="4 0 0"
+                    material="color: #6b93d6; roughness: 0.7"
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 10000"
+                    onclick="showPlanetInfo('earth')">
+                </a-sphere>
+                <!-- Luna -->
+                <a-entity id="moonOrbit" position="4 0 0">
+                    <a-sphere 
+                        id="moon"
+                        radius="0.08" 
+                        position="0.5 0 0"
+                        material="color: #c0c0c0; roughness: 0.9">
+                    </a-sphere>
+                    <a-animation 
+                        attribute="rotation" 
+                        to="0 360 0" 
+                        dur="5000" 
+                        repeat="indefinite">
+                    </a-animation>
+                </a-entity>
+                <a-animation 
+                    attribute="rotation" 
+                    to="0 360 0" 
+                    dur="40000" 
+                    repeat="indefinite">
+                </a-animation>
+            </a-entity>
+
+            <!-- Marte -->
+            <a-entity id="marsOrbit" position="0 0 0">
+                <a-sphere 
+                    id="mars"
+                    class="clickable"
+                    radius="0.2" 
+                    position="5.5 0 0"
+                    material="color: #cd5c5c; roughness: 0.8"
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 12000"
+                    onclick="showPlanetInfo('mars')">
+                </a-sphere>
+                <a-animation 
+                    attribute="rotation" 
+                    to="0 360 0" 
+                    dur="60000" 
+                    repeat="indefinite">
+                </a-animation>
+            </a-entity>
+
+            <!-- Júpiter -->
+            <a-entity id="jupiterOrbit" position="0 0 0">
+                <a-sphere 
+                    id="jupiter"
+                    class="clickable"
+                    radius="0.6" 
+                    position="8 0 0"
+                    material="color: #d8ca9d; roughness: 0.9"
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 15000"
+                    onclick="showPlanetInfo('jupiter')">
+                </a-sphere>
+                <a-animation 
+                    attribute="rotation" 
+                    to="0 360 0" 
+                    dur="80000" 
+                    repeat="indefinite">
+                </a-animation>
+            </a-entity>
+
+            <!-- Saturno -->
+            <a-entity id="saturnOrbit" position="0 0 0">
+                <a-sphere 
+                    id="saturn"
+                    class="clickable"
+                    radius="0.5" 
+                    position="11 0 0"
+                    material="color: #fad5a5; roughness: 0.8"
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 18000"
+                    onclick="showPlanetInfo('saturn')">
+                </a-sphere>
+                <!-- Anillos de Saturno -->
+                <a-torus 
+                    id="saturnRings"
+                    radius="0.8" 
+                    radius-tubular="0.05" 
+                    position="11 0 0"
+                    rotation="0 0 0"
+                    material="color: #d4af37; opacity: 0.6; transparent: true">
+                </a-torus>
+                <a-animation 
+                    attribute="rotation" 
+                    to="0 360 0" 
+                    dur="100000" 
+                    repeat="indefinite">
+                </a-animation>
+            </a-entity>
+
+            <!-- Urano -->
+            <a-entity id="uranusOrbit" position="0 0 0">
+                <a-sphere 
+                    id="uranus"
+                    class="clickable"
+                    radius="0.3" 
+                    position="14 0 0"
+                    material="color: #4fd0e7; roughness: 0.7"
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 20000"
+                    onclick="showPlanetInfo('uranus')">
+                </a-sphere>
+                <a-animation 
+                    attribute="rotation" 
+                    to="0 360 0" 
+                    dur="120000" 
+                    repeat="indefinite">
+                </a-animation>
+            </a-entity>
+
+            <!-- Neptuno -->
+            <a-entity id="neptuneOrbit" position="0 0 0">
+                <a-sphere 
+                    id="neptune"
+                    class="clickable"
+                    radius="0.3" 
+                    position="17 0 0"
+                    material="color: #4b70dd; roughness: 0.8"
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 22000"
+                    onclick="showPlanetInfo('neptune')">
+                </a-sphere>
+                <a-animation 
+                    attribute="rotation" 
+                    to="0 360 0" 
+                    dur="150000" 
+                    repeat="indefinite">
+                </a-animation>
+            </a-entity>
+
+        </a-entity>
+
+    </a-scene>
+
+    <!-- Textura de estrellas -->
+    <canvas id="starsCanvas" width="2048" height="1024" style="display: none;"></canvas>
+
+    <!-- A-Frame Script -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    
+    <script>
+        // Datos de los planetas
+        const planetData = {
+            sun: {
+                name: "Sol",
+                description: "Nuestra estrella, una bola gigante de gas caliente que proporciona luz y calor a todo el sistema solar.",
+                diameter: "1,392,700 km",
+                distance: "Centro del sistema",
+                period: "25-35 días (rotación)"
+            },
+            mercury: {
+                name: "Mercurio",
+                description: "El planeta más cercano al Sol. Tiene temperaturas extremas y no tiene atmósfera.",
+                diameter: "4,879 km",
+                distance: "57.9 millones km",
+                period: "88 días terrestres"
+            },
+            venus: {
+                name: "Venus",
+                description: "El planeta más caliente del sistema solar debido a su densa atmósfera de dióxido de carbono.",
+                diameter: "12,104 km",
+                distance: "108.2 millones km",
+                period: "225 días terrestres"
+            },
+            earth: {
+                name: "Tierra",
+                description: "Nuestro hogar. El único planeta conocido con vida, agua líquida y una atmósfera rica en oxígeno.",
+                diameter: "12,756 km",
+                distance: "149.6 millones km",
+                period: "365.25 días"
+            },
+            mars: {
+                name: "Marte",
+                description: "El planeta rojo. Tiene el volcán más grande del sistema solar y evidencia de agua en el pasado.",
+                diameter: "6,792 km",
+                distance: "227.9 millones km",
+                period: "687 días terrestres"
+            },
+            jupiter: {
+                name: "Júpiter",
+                description: "El planeta más grande. Es un gigante gaseoso con la Gran Mancha Roja, una tormenta gigante.",
+                diameter: "142,984 km",
+                distance: "778.5 millones km",
+                period: "11.9 años terrestres"
+            },
+            saturn: {
+                name: "Saturno",
+                description: "Famoso por sus anillos espectaculares. Es menos denso que el agua y flotaría en un océano gigante.",
+                diameter: "120,536 km",
+                distance: "1,432 millones km",
+                period: "29.5 años terrestres"
+            },
+            uranus: {
+                name: "Urano",
+                description: "El planeta que rota de lado. Tiene anillos tenues y una atmósfera de hidrógeno y helio.",
+                diameter: "51,118 km",
+                distance: "2,867 millones km",
+                period: "84 años terrestres"
+            },
+            neptune: {
+                name: "Neptuno",
+                description: "El planeta más ventoso del sistema solar. Sus vientos pueden alcanzar hasta 2,100 km/h.",
+                diameter: "49,528 km",
+                distance: "4,515 millones km",
+                period: "165 años terrestres"
+            }
+        };
+
+        // Crear textura de estrellas
+        function createStarsTexture() {
+            const canvas = document.getElementById('starsCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Fondo negro
+            ctx.fillStyle = '#000011';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Dibujar estrellas
+            ctx.fillStyle = '#ffffff';
+            for (let i = 0; i < 2000; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const size = Math.random() * 2;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            return canvas.toDataURL();
+        }
+
+        // Mostrar información del planeta
+        function showPlanetInfo(planetId) {
+            const data = planetData[planetId];
+            if (!data) return;
+            
+            document.getElementById('planetName').textContent = data.name;
+            document.getElementById('planetDescription').textContent = data.description;
+            document.getElementById('planetDiameter').textContent = data.diameter;
+            document.getElementById('planetDistance').textContent = data.distance;
+            document.getElementById('planetPeriod').textContent = data.period;
+            
+            document.getElementById('planetInfo').style.display = 'block';
+        }
+
+        // Cerrar información del planeta
+        function closePlanetInfo() {
+            document.getElementById('planetInfo').style.display = 'none';
+        }
+
+        // Resetear vista
+        function resetView() {
+            const camera = document.getElementById('camera');
+            camera.setAttribute('position', '0 1.6 5');
+            camera.setAttribute('rotation', '0 0 0');
+        }
+
+        // Pausar/reanudar animaciones
+        let animationsPaused = false;
+        function toggleAnimation() {
+            const scene = document.getElementById('scene');
+            const animations = scene.querySelectorAll('[animation]');
+            
+            animationsPaused = !animationsPaused;
+            
+            animations.forEach(anim => {
+                if (animationsPaused) {
+                    anim.removeAttribute('animation');
+                } else {
+                    location.reload();
+                }
+            });
+        }
+
+        // Enfocar en el Sol
+        function focusOnSun() {
+            const camera = document.getElementById('camera');
+            camera.setAttribute('position', '0 1 2');
+            camera.setAttribute('rotation', '0 0 0');
+        }
+
+        // Enfocar en la Tierra
+        function focusOnEarth() {
+            const camera = document.getElementById('camera');
+            camera.setAttribute('position', '4 1 2');
+            camera.setAttribute('rotation', '0 0 0');
+        }
+
+        // Función para actualizar estado de carga
+        function updateLoadingStatus(message) {
+            const status = document.getElementById('loadingStatus');
+            if (status) {
+                status.textContent = message;
+            }
+        }
+
+        // Función para ocultar indicador de carga
+        function hideLoadingIndicator() {
+            const loading = document.getElementById('loadingIndicator');
+            if (loading) {
+                loading.style.display = 'none';
+            }
+        }
+
+        // Inicializar cuando A-Frame esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            updateLoadingStatus('Cargando A-Frame...');
+            
+            // Esperar a que A-Frame esté listo
+            const checkAFrame = setInterval(() => {
+                if (typeof AFRAME !== 'undefined') {
+                    clearInterval(checkAFrame);
+                    
+                    updateLoadingStatus('Creando textura de estrellas...');
+                    const starsTexture = createStarsTexture();
+                    
+                    updateLoadingStatus('Configurando escena...');
+                    const sky = document.getElementById('sky');
+                    if (sky) {
+                        sky.setAttribute('src', starsTexture);
+                    }
+                    
+                    updateLoadingStatus('Finalizando...');
+                    
+                    setTimeout(() => {
+                        hideLoadingIndicator();
+                        console.log('Sistema Solar 3D cargado correctamente');
+                    }, 1000);
+                }
+            }, 100);
+        });
+
+        // Cerrar información con tecla Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closePlanetInfo();
+            }
+        });
+    </script>
+</body>
+</html>
